@@ -1,0 +1,10 @@
+.idea
+.mvn
+*.log
+*.logs
+*.iml
+*.xml
+/target/
+*.class
+.ipynb_checkpoints/
+/Logs/
