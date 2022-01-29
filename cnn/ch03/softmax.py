@@ -7,9 +7,20 @@ def softmax_native(x):
     return np.exp(x) / np.sum(np.exp(x))
 
 
+# def softmax(x):
+#     x_max = np.max(x)
+#     x = x - x_max
+#     return np.exp(x) / np.sum(np.exp(x))
+
+
 def softmax(x):
-    x_max = np.max(x)
-    x = x - x_max
+    if x.ndim == 2:
+        # x = x.T
+        x = x - np.max(x, axis=1).reshape(-1, 1)
+        y = np.exp(x) / np.sum(np.exp(x), axis=1).reshape(-1, 1)
+        return y
+
+    x = x - np.max(x)  # 溢出对策
     return np.exp(x) / np.sum(np.exp(x))
 
 
