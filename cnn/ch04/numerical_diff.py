@@ -14,9 +14,9 @@ def numerical_diff(f, x):
     return (f(x + h) - f(x - h)) / (2 * h)
 
 
-def numerical_gradient(f, x):
-    """数值梯度"""
-    h = 1e-4
+def numerical_gradient_native(f, x):
+    """数值梯度，适用于变量为一维的情况下"""
+    h = 1e-7
     gradients = np.zeros_like(x)
     for i in range(x.shape[0]):
         tmp_val = x[i]
@@ -29,6 +29,28 @@ def numerical_gradient(f, x):
         gradients[i] = (f_h1 - f_h2) / (2 * h)
         x[i] = tmp_val
     return gradients
+
+
+def numerical_gradient(f, x):
+    """数值梯度，适用于一维到多维"""
+    h = 1e-4  # 0.0001
+    grad = np.zeros_like(x)
+
+    it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+    while not it.finished:
+        idx = it.multi_index
+        tmp_val = x[idx]
+        x[idx] = float(tmp_val) + h
+        fxh1 = f(x)  # f(x+h)
+
+        x[idx] = tmp_val - h
+        fxh2 = f(x)  # f(x-h)
+        grad[idx] = (fxh1 - fxh2) / (2 * h)
+
+        x[idx] = tmp_val  # 还原值
+        it.iternext()
+
+    return grad
 
 
 if __name__ == "__main__":
