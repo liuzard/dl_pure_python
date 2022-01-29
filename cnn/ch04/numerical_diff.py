@@ -21,7 +21,6 @@ def numerical_gradient_native(f, x):
     for i in range(x.shape[0]):
         tmp_val = x[i]
         x[i] = tmp_val + h
-
         f_h1 = f(x)
         x[i] = tmp_val - h
 

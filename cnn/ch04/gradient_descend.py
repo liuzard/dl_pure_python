@@ -3,11 +3,12 @@ import numpy as np
 from numerical_diff import numerical_gradient
 
 
-def gradient_descent(f, init_x, lr=0.1, step=100):
+def gradient_descent(f, init_x, lr=0.1, step=1000):
     """梯度下降算法"""
     x = init_x
     for i in range(step):
         gradients = numerical_gradient(f, x)
+        # print(gradients)
         x -= lr * gradients
     return x
 

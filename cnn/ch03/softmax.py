@@ -13,14 +13,25 @@ def softmax_native(x):
 #     return np.exp(x) / np.sum(np.exp(x))
 
 
+# def softmax(x):
+#     if x.ndim == 2:
+#         # x = x.T
+#         x = x - np.max(x, axis=1).reshape(-1, 1)
+#         y = np.exp(x) / np.sum(np.exp(x), axis=1).reshape(-1, 1)
+#         return y
+#
+#     x = x - np.max(x)  # 溢出对策
+#     return np.exp(x) / np.sum(np.exp(x))
+
+
 def softmax(x):
     if x.ndim == 2:
-        # x = x.T
-        x = x - np.max(x, axis=1).reshape(-1, 1)
-        y = np.exp(x) / np.sum(np.exp(x), axis=1).reshape(-1, 1)
-        return y
+        x = x.T
+        x = x - np.max(x, axis=0)
+        y = np.exp(x) / np.sum(np.exp(x), axis=0)
+        return y.T
 
-    x = x - np.max(x)  # 溢出对策
+    x = x - np.max(x) # 溢出对策
     return np.exp(x) / np.sum(np.exp(x))
 
 

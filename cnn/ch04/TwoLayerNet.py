@@ -5,6 +5,7 @@ from cnn.ch03.softmax import softmax
 from cnn.ch03.sigmoid import sigmoid
 from numerical_diff import numerical_gradient
 from cnn.dataset import mnist
+from cnn.utils.timer_utils import timer
 
 
 def sigmoid_grad(x):
@@ -29,7 +30,7 @@ class TwoLayerNet(object):
 
     def loss(self, x, y_true):
         y_pred = self.foward(x)
-        return cross_entropy_error(y_true, y_pred)
+        return cross_entropy_oh(y_true, y_pred)
 
     def acc(self, x, y_true):
         y_pred = self.foward(x)
@@ -37,6 +38,7 @@ class TwoLayerNet(object):
         y_true = np.argmax(y_true, axis=1)
         return np.sum(y_pred == y_true) / y_true.shape[0]
 
+    @timer
     def numerical_gradient(self, x, y_true):
         f = lambda W: self.loss(x, y_true)
         grads = dict()
@@ -75,18 +77,18 @@ class TwoLayerNet(object):
 if __name__ == "__main__":
     two_layer_net = TwoLayerNet(784, 50, 10)
 
-    train_set, test_set = mnist.load_mnist(one_hot_label=True)
-    train_imgs, train_lables = train_set
-    test_imgs, test_labels = test_set
+    (train_imgs, train_labels), (test_imgs, test_labels) = mnist.load_mnist(one_hot_label=True)
+
     train_size = train_imgs.shape[0]
     batch_size = 100
-    lr = 0.1
+    lr = 0.2
     for i in range(10000):
         random_index = np.random.choice(train_size, batch_size)
-        train_x, train_y = train_imgs[random_index], train_lables[random_index]
+        train_x, train_y = train_imgs[random_index], train_labels[random_index]
+        grads = two_layer_net.numerical_gradient(train_x, train_y)
 
         for key in ["W1", "W2", "b1", "b2"]:
-            two_layer_net.params[key] -= lr * two_layer_net.numerical_gradient(train_x, train_y)[key]
+            two_layer_net.params[key] -= lr * grads[key]
         if i % 10 == 0:
             loss_test = two_layer_net.loss(test_imgs, test_labels)
             acc_test = two_layer_net.acc(test_imgs, test_labels)
